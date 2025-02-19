@@ -44,10 +44,12 @@ class WholeFileFunctionCoder(Coder):
     ]
 
     def __init__(self, *args, **kwargs):
+        raise RuntimeError("Deprecated, needs to be refactored to support get_edits/apply_edits")
+
         self.gpt_prompts = WholeFileFunctionPrompts()
         super().__init__(*args, **kwargs)
 
-    def update_cur_messages(self, edited):
+    def add_assistant_reply_to_cur_messages(self, edited):
         if edited:
             self.cur_messages += [
                 dict(role="assistant", content=self.gpt_prompts.redacted_edit_message)
@@ -105,7 +107,7 @@ class WholeFileFunctionCoder(Coder):
 
         return "\n".join(show_diff)
 
-    def update_files(self):
+    def _update_files(self):
         name = self.partial_response_function_call.get("name")
         if name and name != "write_file":
             raise ValueError(f'Unknown function_call name="{name}", use name="write_file"')
